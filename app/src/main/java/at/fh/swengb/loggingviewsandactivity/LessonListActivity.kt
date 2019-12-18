@@ -3,9 +3,11 @@ package at.fh.swengb.loggingviewsandactivity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.squareup.moshi.Moshi
 import kotlinx.android.synthetic.main.activity_lesson_list.*
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,7 +38,41 @@ class LessonListActivity : AppCompatActivity() {
         lesson_recycler_view.layoutManager = LinearLayoutManager(this)
         lesson_recycler_view.adapter = lessonAdapter
 
+        parseJson()
+
+        SleepyAsyncTask().execute()
+
+        Log.v("Thread",Thread.currentThread().name)
+
         }
+
+    fun parseJson() {
+        val json = """
+            {
+                "id": "1",
+                "name": "Lecture 0",
+                "date": "09.10.2019",
+                "topic": "Introduction",
+                "type": "LECTURE",
+                "lecturers": [
+                    {
+                        "name": "Lukas Bloder"
+                    },
+                    {
+                        "name": "Sanja Illes"
+                    }
+                ],
+                "ratings": []
+            }
+        """
+
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter = moshi.adapter<Lesson>(Lesson::class.java)
+
+        val result =  jsonAdapter.fromJson(json)
+        Log.e("json", "${result?.name}")
     }
+
+}
 
 
